@@ -212,6 +212,7 @@
                                         </div>
                                         <div class="zf-clearBoth"></div>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -247,7 +248,7 @@
                 <ul>
                     <li class="zf-fmFooter"><button class="zf-submitColor">Request New Address</button></li>
                 </ul>
-            </div>
+            
         </form>
     </div>
     <script type="text/javascript">var dateAndMonthRegexFormateArray = zf_SetDateAndMonthRegexBasedOnDateFormate('dd-MMM-yyyy');
@@ -314,6 +315,339 @@ loadCountries();
     $("#loader").hide();
   });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validation rules
+    const validationRules = {
+        Name_First: {
+            required: true,
+            pattern: /^[a-zA-Z\s]{2,50}$/,
+            message: "First name must be 2-50 characters and contain only letters"
+        },
+        Name_Last: {
+            required: true,
+            pattern: /^[a-zA-Z\s]{2,50}$/,
+            message: "Last name must be 2-50 characters and contain only letters"
+        },
+        PhoneNumber_countrycode: {
+            required: true,
+            pattern: /^[\+]?[0-9\s\-\(\)]{10,15}$/,
+            message: "Please enter a valid phone number (10-15 digits)"
+        },
+        Email: {
+            required: false,
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Please enter a valid email address"
+        },
+        Dropdown: {
+            required: true,
+            validate: function(value) {
+                return value !== "" && value !== "-Select-" && value !== "Select Country";
+            },
+            message: "Please select a country"
+        },
+        SingleLine: {
+            required: true,
+            pattern: /^.{5,100}$/,
+            message: "Street address must be 5-100 characters long"
+        },
+        SingleLine2: {
+            required: true,
+            pattern: /^[a-zA-Z\s]{2,50}$/,
+            message: "City name must be 2-50 characters and contain only letters"
+        },
+        SingleLine1: {
+            required: false,
+            pattern: /^.{0,50}$/,
+            message: "Suite/Unit must be less than 50 characters"
+        },
+        Dropdown1: {
+            required: true,
+            validate: function(value) {
+                return value !== "" && value !== "-Select-" && value !== "Select State";
+            },
+            message: "Please select a state/region/province"
+        },
+        SingleLine3: {
+            required: true,
+            pattern: /^[A-Za-z0-9\s\-]{3,10}$/,
+            message: "Please enter a valid postal/zip code (3-10 characters)"
+        }
+    };
 
+    // Show error function
+    function showError(fieldName, message) {
+        // Special case for name fields - both use same error element
+        let errorId = fieldName + '_error';
+        if (fieldName === 'Name_First' || fieldName === 'Name_Last') {
+            errorId = 'Name_error';
+        }
+        // Special case for phone number field
+        if (fieldName === 'PhoneNumber_countrycode') {
+            errorId = 'PhoneNumber_error';
+        }
+        
+        const errorElement = document.getElementById(errorId);
+        
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    }
+
+    // Hide error function
+    function hideError(fieldName) {
+        // For name fields, only hide error if BOTH first and last names are valid
+        if (fieldName === 'Name_First' || fieldName === 'Name_Last') {
+            const firstNameInput = document.querySelector('[name="Name_First"]');
+            const lastNameInput = document.querySelector('[name="Name_Last"]');
+            const firstNameValid = firstNameInput && validateFieldSilent('Name_First', firstNameInput.value);
+            const lastNameValid = lastNameInput && validateFieldSilent('Name_Last', lastNameInput.value);
+            
+            // Only hide name error if both fields are valid
+            if (firstNameValid && lastNameValid) {
+                const errorElement = document.getElementById('Name_error');
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            }
+            return;
+        }
+        
+        // Special case for phone number field
+        let errorId = fieldName + '_error';
+        if (fieldName === 'PhoneNumber_countrycode') {
+            errorId = 'PhoneNumber_error';
+        }
+        
+        const errorElement = document.getElementById(errorId);
+        
+        if (errorElement) {
+            errorElement.style.display = 'none';
+        }
+    }
+
+    // Silent validation function (doesn't show/hide errors)
+    function validateFieldSilent(fieldName, value) {
+        const rule = validationRules[fieldName];
+        if (!rule) return true;
+
+        // Check if required field is empty
+        if (rule.required && (!value || value.trim() === '')) {
+            return false;
+        }
+
+        // If not required and empty, return true
+        if (!rule.required && (!value || value.trim() === '')) {
+            return true;
+        }
+
+        // Custom validation function
+        if (rule.validate && !rule.validate(value)) {
+            return false;
+        }
+
+        // Pattern validation
+        if (rule.pattern && !rule.pattern.test(value)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // Validate field function
+    function validateField(fieldName, value) {
+        const rule = validationRules[fieldName];
+        if (!rule) return true;
+
+        // Check if required field is empty
+        if (rule.required && (!value || value.trim() === '')) {
+            showError(fieldName, rule.message);
+            return false;
+        }
+
+        // If not required and empty, hide error and return true
+        if (!rule.required && (!value || value.trim() === '')) {
+            hideError(fieldName);
+            return true;
+        }
+
+        // Custom validation function
+        if (rule.validate && !rule.validate(value)) {
+            showError(fieldName, rule.message);
+            return false;
+        }
+
+        // Pattern validation
+        if (rule.pattern && !rule.pattern.test(value)) {
+            showError(fieldName, rule.message);
+            return false;
+        }
+
+        // If all validations pass
+        hideError(fieldName);
+        return true;
+    }
+
+    // Add event listeners to all form fields
+    Object.keys(validationRules).forEach(fieldName => {
+        const element = document.querySelector(`[name="${fieldName}"]`);
+        if (element) {
+            // Real-time validation on input/change
+            if (element.tagName === 'SELECT') {
+                element.addEventListener('change', function() {
+                    validateField(fieldName, this.value);
+                });
+            } else {
+                element.addEventListener('input', function() {
+                    validateField(fieldName, this.value);
+                });
+                
+                element.addEventListener('blur', function() {
+                    validateField(fieldName, this.value);
+                });
+            }
+        }
+    });
+
+    // Form submission validation
+    const form = document.getElementById('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let isFormValid = true;
+            
+            // Validate all fields
+            Object.keys(validationRules).forEach(fieldName => {
+                const element = document.querySelector(`[name="${fieldName}"]`);
+                if (element) {
+                    const isValid = validateField(fieldName, element.value);
+                    if (!isValid) {
+                        isFormValid = false;
+                    }
+                }
+            });
+
+            // Additional validation for country-state dependency
+            const countrySelect = document.querySelector('[name="Dropdown"]');
+            const stateSelect = document.querySelector('[name="Dropdown1"]');
+            
+            if (countrySelect && stateSelect) {
+                if (countrySelect.value && (!stateSelect.value || stateSelect.value === 'Select State')) {
+                    showError('Dropdown1', 'Please select a state for the chosen country');
+                    isFormValid = false;
+                }
+            }
+
+            if (!isFormValid) {
+                e.preventDefault();
+                
+                // Scroll to first error
+                const firstError = document.querySelector('.zf-errorMessage[style*="block"]');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                return false;
+            }
+            
+            return true;
+        });
+    }
+
+   
+    const countrySelect = document.getElementById('country');
+    const stateSelect = document.getElementById('state');
+    
+    if (countrySelect && stateSelect) {
+        countrySelect.addEventListener('change', function() {
+            
+            if (this.value) {
+                hideError('Dropdown');
+                // Reset state selection
+                stateSelect.value = '';
+                hideError('Dropdown1');
+            }
+        });
+        
+        stateSelect.addEventListener('change', function() {
+            if (this.value) {
+                hideError('Dropdown1');
+            }
+        });
+    }
+
+    
+    const phoneInput = document.querySelector('[name="PhoneNumber_countrycode"]');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+           
+            let value = this.value;
+            
+           
+            value = value.replace(/[^0-9\+]/g, '');
+            
+            
+            if (value.indexOf('+') > 0) {
+                value = value.replace(/\+/g, '');
+            }
+            if (value.split('+').length > 2) {
+                value = value.replace(/\+(.*)/, '$1');
+                value = '+' + value;
+            }
+            
+            // Limit total length (including +)
+            if (value.startsWith('+')) {
+                if (value.length > 16) { // + plus 15 digits
+                    value = value.substring(0, 16);
+                }
+            } else {
+                if (value.length > 15) { // 15 digits max
+                    value = value.substring(0, 15);
+                }
+            }
+            
+            this.value = value;
+        });
+        
+        
+        phoneInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            let paste = (e.clipboardData || window.clipboardData).getData('text');
+            paste = paste.replace(/[^0-9\+]/g, '');
+            
+           
+            if (paste.indexOf('+') > 0) {
+                paste = paste.replace(/\+/g, '');
+            }
+            if (paste.split('+').length > 2) {
+                paste = paste.replace(/\+(.*)/, '$1');
+                paste = '+' + paste;
+            }
+            
+            
+            if (paste.startsWith('+')) {
+                paste = paste.substring(0, 16);
+            } else {
+                paste = paste.substring(0, 15);
+            }
+            
+            this.value = paste;
+            
+            
+            validateField('PhoneNumber_countrycode', paste);
+        });
+    }
+
+    // Initialize validation state
+    setTimeout(() => {
+        Object.keys(validationRules).forEach(fieldName => {
+            const element = document.querySelector(`[name="${fieldName}"]`);
+            if (element && element.value) {
+                validateField(fieldName, element.value);
+            }
+        });
+    }, 100);
+});
+</script>
 </body>
 </html>
