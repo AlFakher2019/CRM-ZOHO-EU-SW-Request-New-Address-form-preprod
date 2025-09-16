@@ -212,6 +212,18 @@
                                         </div>
                                         <div class="zf-clearBoth"></div>
                                     </div>
+                                     <div class="zf-tempFrmWrapper  zf-large " style="display: none;"><label class="zf-labelName">
+                                            State / Reigon / Province
+                                        </label>
+                                        <div class="zf-tempContDiv">
+                                            <span>
+                                                <input type="text" name="SingleLine5" checktype="c1" value=""
+                                                    maxlength="255" fieldType=1 placeholder="" /> </span>
+                                            <p id="SingleLine5_error" class="zf-errorMessage" style="display: none;">
+                                                Invalid value</p>
+                                        </div>
+                                        <div class="zf-clearBoth"></div>
+                                    </div>
                                     
                                 </div>
                             </div>
@@ -255,7 +267,7 @@
         var zf_DateRegex = new RegExp(dateAndMonthRegexFormateArray[0]);
         var zf_MonthYearRegex = new RegExp(dateAndMonthRegexFormateArray[1]);
         var zf_MandArray = ["Name_First", "Name_Last", "PhoneNumber_countrycode", "Dropdown",  "SingleLine", "SingleLine2", "Dropdown1", "SingleLine3"];
-        var zf_FieldArray = ["Name_First", "Name_Last", "PhoneNumber_countrycode", "Email", "Dropdown", "SingleLine", "SingleLine2", "SingleLine1", "Dropdown1", "SingleLine3", "Checkbox"];
+        var zf_FieldArray = ["Name_First", "Name_Last", "PhoneNumber_countrycode", "Email", "Dropdown", "SingleLine", "SingleLine2", "SingleLine1", "Dropdown1", "SingleLine3", "Checkbox","SingleLine5"];
         var isSalesIQIntegrationEnabled = false;
         var salesIQFieldsArray = [];</script>
     
@@ -266,29 +278,38 @@ async function loadCountries() {
     const data = await res.json();
 
     const countrySelect = document.getElementById("country");
-    
+    const stateSelect = document.getElementById("state");
+
     // Populate country dropdown
     data.data.forEach(c => {
       let option = document.createElement("option");
       option.value = c.name;
       option.textContent = c.name;
-      option.dataset.states = JSON.stringify(c.states); // attach states
+      option.dataset.states = JSON.stringify(c.states); // attach states array
       countrySelect.appendChild(option);
     });
 
-    // Handle state population on country change
+    // Handle state population when country changes
     countrySelect.addEventListener("change", function () {
-      const stateSelect = document.getElementById("state");
-      stateSelect.innerHTML = '<option value="">-- Select State --</option>'; // reset
-      
+      stateSelect.innerHTML = '<option value="">Select State</option>'; // reset states
+
       if (this.value) {
         const states = JSON.parse(this.selectedOptions[0].dataset.states);
-        states.forEach(s => {
+        
+        if (states && states.length > 0) {
+          states.forEach(s => {
+            let option = document.createElement("option");
+            option.value = s.name;
+            option.textContent = s.name;
+            stateSelect.appendChild(option);
+          });
+        } else {
+          // If no states (like Singapore, UAE, etc.)
           let option = document.createElement("option");
-          option.value = s.name;
-          option.textContent = s.name;
+          option.value = "N/A";
+          option.textContent = "N/A";
           stateSelect.appendChild(option);
-        });
+        }
       }
     });
   } catch (err) {
@@ -296,9 +317,20 @@ async function loadCountries() {
   }
 }
 
-// Load on page start
-loadCountries();
+// Load countries on page load
+document.addEventListener("DOMContentLoaded", loadCountries);
+
+const countrySelect = document.getElementById("country");
+const stateSelect = document.getElementById("state");
+const hiddenStateField = document.querySelector('[name="SingleLine5"]');
+
+if (stateSelect && hiddenStateField) {
+  stateSelect.addEventListener("change", function () {
+    hiddenStateField.value = this.value; 
+  });
+}
 </script>
+
 
 <script>
   window.addEventListener("message", function (event) {
@@ -649,5 +681,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 });
 </script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        const checkbox = document.querySelector('[name="Checkbox"]');
+        console.log("Checkbox checked:", checkbox.checked);
+        console.log("Checkbox value:", checkbox.value);
+      });
+    } else {
+      console.log("Form element not found.");
+    }
+  });
+</script>
+
+
 </body>
 </html>
