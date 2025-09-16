@@ -15,7 +15,7 @@
     <!-- Change or deletion of the name attributes in the input tag will lead to empty values on record submission-->
     <div class="zf-templateWidth">
         <form
-            action='https://forms.zohopublic.eu/ookaportal/form/RequestNewAddressFormPreProd/formperma/B1FegR2ihywkARusR4mFuIoIm9d46TBudL_aO_O4DIQ/htmlRecords/submit'
+            action="https://forms.zohopublic.eu/ookaportal/form/RequestNewAddressFormPreProd/formperma/B1FegR2ihywkARusR4mFuIoIm9d46TBudL_aO_O4DIQ/htmlRecords/submit"
             name='form' method='POST' onSubmit='javascript:document.charset="UTF-8"; return zf_ValidateAndSubmit();'
             accept-charset='UTF-8' enctype='multipart/form-data' id='form'>
             <input type="hidden" name="zf_referrer_name"
@@ -241,20 +241,26 @@
                             </div>
                             <div class="zf-clearBoth"></div>
                         </div>
-                        <div class="zf-checkbox zf-tempFrmWrapper zf-oneColumns">
-                            <div class="zf-tempContDiv">
-                                <div class="zf-overflow">
-                                    <span class="zf-multiAttType">
-                                        <input class="zf-checkBoxType" type="checkbox" id="Checkbox_1" name="Checkbox"
-                                            checktype="c1" value="Save as default billing address" />
-                                        <label for="Checkbox_1" class="zf-checkChoice">Save as default billing
-                                            address</label> </span>
-                                    <div class="zf-clearBoth"></div>
-                                </div>
-                                <p id="Checkbox_error" class="zf-errorMessage" style="display:none;">Invalid value</p>
-                            </div>
-                            <div class="zf-clearBoth"></div>
-                        </div>
+                        <div class="zf-tempFrmWrapper zf-decesion">
+                <div class="zf-tempContDiv">
+                  <input
+                    type="checkbox"
+                    checktype="c1"
+                    id="DecisionBox"
+                    name="DecisionBox"
+                  /><label for="DecisionBox" class="zf-labelName">
+                    Save as default billing address
+                  </label>
+                  <p
+                    id="DecisionBox_error"
+                    class="zf-errorMessage"
+                    style="display: none"
+                  >
+                    Invalid value
+                  </p>
+                </div>
+                <div class="zf-clearBoth"></div>
+              </div>
                     </ul>
                 </div>
                 <ul>
@@ -267,7 +273,7 @@
         var zf_DateRegex = new RegExp(dateAndMonthRegexFormateArray[0]);
         var zf_MonthYearRegex = new RegExp(dateAndMonthRegexFormateArray[1]);
         var zf_MandArray = ["Name_First", "Name_Last", "PhoneNumber_countrycode", "Dropdown",  "SingleLine", "SingleLine2", "Dropdown1", "SingleLine3"];
-        var zf_FieldArray = ["Name_First", "Name_Last", "PhoneNumber_countrycode", "Email", "Dropdown", "SingleLine", "SingleLine2", "SingleLine1", "Dropdown1", "SingleLine3", "Checkbox","SingleLine5"];
+        var zf_FieldArray = ["Name_First", "Name_Last", "PhoneNumber_countrycode", "Email", "Dropdown", "SingleLine", "SingleLine2", "SingleLine1", "Dropdown1", "SingleLine3", "DecisionBox","SingleLine5"];
         var isSalesIQIntegrationEnabled = false;
         var salesIQFieldsArray = [];</script>
     
@@ -686,7 +692,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     if (form) {
       form.addEventListener('submit', function(e) {
-        const checkbox = document.querySelector('[name="Checkbox"]');
+        const checkbox = document.querySelector('[name="DecisionBox"]');
         console.log("Checkbox checked:", checkbox.checked);
         console.log("Checkbox value:", checkbox.value);
       });
