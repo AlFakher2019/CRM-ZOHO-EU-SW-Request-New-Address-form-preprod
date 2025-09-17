@@ -103,7 +103,7 @@
                             </label>
                             <div class="zf-tempContDiv">
                                 <span>
-                                    <input type="hidden" name="Email" checktype="c5" value="" maxlength="255" fieldType=9
+                                    <input type="hidden" name="Email" id="Email" checktype="c5" value="" maxlength="255" fieldType=9
                                         placeholder="" /> </span>
                                 <p id="Email_error" class="zf-errorMessage" style="display: none;">enter a valid email
                                 </p>
@@ -339,20 +339,23 @@ if (stateSelect && hiddenStateField) {
 
 
 <script>
-  window.addEventListener("message", function (event) {
-    var email = event.data;
-    document.getElementById("Email").value = email;
+  document.addEventListener("DOMContentLoaded", function () {
+    window.addEventListener("message", function (event) {
+      var email = event.data;
+      document.getElementById("Email").value = email;
 
-    let checkField = setInterval(function () {
-      if ($("#Email").val() !== "") {
-        $("#loader").hide();
-        clearInterval(checkField);
-      }
-    }, 100);
+      let checkField = setInterval(function () {
+        if ($("#Email").val() !== "") {
+          $("#loader").hide();
+          clearInterval(checkField);
+        }
+      }, 100);
 
-    $("#loader").hide();
+      $("#loader").hide();
+    });
   });
 </script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Validation rules
