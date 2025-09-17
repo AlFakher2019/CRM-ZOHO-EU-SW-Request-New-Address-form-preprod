@@ -7,8 +7,9 @@
     <script src="js/validation.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+   <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 
 </head>
 
@@ -250,7 +251,7 @@
                     id="DecisionBox"
                     name="DecisionBox"
                   /><label for="DecisionBox" class="zf-labelName">
-                    Save as default billing address
+                    Save as Default Billing address
                   </label>
                   <p
                     id="DecisionBox_error"
@@ -265,7 +266,7 @@
                     </ul>
                 </div>
                 <ul>
-                    <li class="zf-fmFooter"><button class="zf-submitColor">Request New Address</button></li>
+                    <li class="zf-fmFooter"><button class="zf-submitColor">Request Billing Address</button></li>
                 </ul>
             
         </form>
@@ -278,7 +279,7 @@
         var isSalesIQIntegrationEnabled = false;
         var salesIQFieldsArray = [];</script>
     
-<script>
+<!-- <script>
 async function loadCountries() {
   try {
     const res = await fetch("https://countriesnow.space/api/v0.1/countries/states");
@@ -336,7 +337,139 @@ if (stateSelect && hiddenStateField) {
     hiddenStateField.value = this.value; 
   });
 }
+</script> -->
+<script>
+async function loadCountries() {
+  const allowedCountries = [
+    "Austria",
+    "Belgium",
+    "Bulgaria",
+    "Croatia",
+    "Czech Republic",
+    "Denmark",
+    "Estonia",
+    "Finland",
+    "France",
+    "Germany",
+    "Greece",
+    "Hungary",
+    "Ireland",
+    "Italy",
+    "Latvia",
+    "Lithuania",
+    "Luxembourg",
+    "Malta",
+    "Netherlands",
+    "Poland",
+    "Portugal",
+    "Romania",
+    "Slovakia",
+    "Slovenia",
+    "Spain",
+    "Sweden",
+    "Switzerland"
+  ];
+
+  // ISO 3-letter codes for allowed countries
+  const countryCodeMap = {
+    "Austria": "AUT",
+    "Belgium": "BEL",
+    "Bulgaria": "BGR",
+    "Croatia": "HRV",
+    "Czech Republic": "CZE",
+    "Denmark": "DNK",
+    "Estonia": "EST",
+    "Finland": "FIN",
+    "France": "FRA",
+    "Germany": "DEU",
+    "Greece": "GRC",
+    "Hungary": "HUN",
+    "Ireland": "IRL",
+    "Italy": "ITA",
+    "Latvia": "LVA",
+    "Lithuania": "LTU",
+    "Luxembourg": "LUX",
+    "Malta": "MLT",
+    "Netherlands": "NLD",
+    "Poland": "POL",
+    "Portugal": "PRT",
+    "Romania": "ROU",
+    "Slovakia": "SVK",
+    "Slovenia": "SVN",
+    "Spain": "ESP",
+    "Sweden": "SWE",
+    "Switzerland": "CHE"
+  };
+
+  try {
+    const res = await fetch("https://countriesnow.space/api/v0.1/countries/states");
+    const data = await res.json();
+
+    const countrySelect = document.getElementById("country");
+    const stateSelect = document.getElementById("state");
+    const hiddenStateField = document.querySelector('[name="SingleLine5"]');
+
+    // Filter only allowed countries
+    const filteredCountries = data.data.filter(c =>
+      allowedCountries.includes(c.name)
+    );
+
+    // Populate allowed countries with ISO codes
+    filteredCountries.forEach(c => {
+      let option = document.createElement("option");
+      option.value = countryCodeMap[c.name] || c.name; // use ISO code
+      option.textContent = c.name;
+      option.dataset.states = JSON.stringify(c.states);
+      countrySelect.appendChild(option);
+    });
+
+    // Handle state population
+    countrySelect.addEventListener("change", function () {
+      stateSelect.innerHTML = '<option value="">Select State</option>';
+
+      if (this.value) {
+        const states = JSON.parse(this.selectedOptions[0].dataset.states);
+
+        if (states && states.length > 0) {
+          states.forEach(s => {
+            let option = document.createElement("option");
+            option.value = s.name; // state codes not available in API, using name
+            option.textContent = s.name;
+            stateSelect.appendChild(option);
+          });
+        } else {
+          let option = document.createElement("option");
+          option.value = "N/A";
+          option.textContent = "N/A";
+          stateSelect.appendChild(option);
+        }
+      }
+    });
+
+    // Sync hidden field with selected state (value = state name for now)
+    if (stateSelect && hiddenStateField) {
+      stateSelect.addEventListener("change", function () {
+        hiddenStateField.value = this.value;
+      });
+    }
+  } catch (err) {
+    console.error("Error loading countries:", err);
+  }
+}
+
+// Load countries on page load
+document.addEventListener("DOMContentLoaded", loadCountries);
+ const countrySelect = document.getElementById("country");
+const stateSelect = document.getElementById("state");
+const hiddenStateField = document.querySelector('[name="SingleLine5"]');
+
+if (stateSelect && hiddenStateField) {
+  stateSelect.addEventListener("change", function () {
+    hiddenStateField.value = this.value; 
+  });
+}
 </script>
+
 
 
 <script>

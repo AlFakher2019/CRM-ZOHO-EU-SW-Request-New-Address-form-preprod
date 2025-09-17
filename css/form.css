@@ -4,14 +4,14 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font: inherit;
+	
 	vertical-align: baseline;
 }
 
 body {
 	background-attachment: fixed;
 	color: #444444;
-	font-family: 'Poppins', sans-serif;
+	font-family: var(--Typography-Family-Body, Inter);
 	margin: 0 auto;
 }
 
@@ -130,7 +130,7 @@ ol, ul {
 .zf-tempContDiv textarea {
 	min-height: 100px;
     height: 100px;
-	font-family: Arial, Helvetica, sans-serif;
+	
 	padding: 10px;
 }
 /* .arrangeAddress .zf-addrCont  span.zf-addtwo{ width: 100% !important;float: none !important;} 		 */
@@ -218,7 +218,7 @@ ol, ul {
     color: #252c3e;
 }
 .zf-form-sBox { 
-	font-family: 'Poppins', sans-serif;
+	
 	padding: 9px 10px 10px 5px;
 	background: #fff;
     border: 1px solid rgba(184, 187, 211, 1);
@@ -718,7 +718,7 @@ ol, ul {
 	font-weight: 600;
     padding: 13px 38px;
 	margin-bottom: 20px;
-	/* margin-top: 20px; */
+	margin-top: 20px;
 }
 
 .zf-submitColor {
@@ -1216,9 +1216,10 @@ width: 223px;
 	padding: 12px 0;
 }
 .zfgridLabelCont label {
+    font-family: var(--Typography-Family-Headings, Inter) !important;
 	font-size: 16px;
 	color: #252c3e;
-	font-weight: 550;
+	font-weight: 600;
 }
 .zfgridLabelCont span {
 	font-size: 14px;
@@ -1649,5 +1650,15 @@ li.zf-tempFrmWrapper.zf-note {
 li.zf-tempFrmWrapper.zf-note::marker {
     content: none !important;
     display: none !important;
+}
+
+/* Force headings inside Zoho form to use Inter */
+.zf-frmTitle,
+.zf-subHead,
+.zf-sectionTitle,
+.zf-head,
+.zf-tempHead,
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--Typography-Family-Body, Inter) !important;
 }
 
